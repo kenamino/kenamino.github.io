@@ -878,7 +878,7 @@
     <div class="projects-grid">
       <!-- VoidShell — featured -->
       <div class="project-card" data-hover>
-        <video class="project-video" autoplay muted loop playsinline src="assets/voidshell-demo.mp4"></video>
+        <video class="project-video" autoplay muted loop playsinline preload="none" data-src="assets/voidshell-demo.mp4"></video>
         <div class="project-overlay">
           <span class="project-tag">Electron &middot; React &middot; Three.js</span>
           <h3 class="project-name">VoidShell</h3>
@@ -891,7 +891,7 @@
 
       <!-- VoidMetric -->
       <div class="project-card" data-hover>
-        <video class="project-video" autoplay muted loop playsinline src="assets/voidmetric-demo.mp4"></video>
+        <video class="project-video" autoplay muted loop playsinline preload="none" data-src="assets/voidmetric-demo.mp4"></video>
         <div class="project-overlay">
           <span class="project-tag">Python &middot; Rich &middot; psutil</span>
           <h3 class="project-name">VoidMetric</h3>
@@ -1072,8 +1072,7 @@
 
   const greetings = ['Hello.', 'Bonjour.', '你好.', 'こんにちは', 'Ciao.', 'Olá.'];
   let gi = 0;
-  let greetingsDone = false;
-  let pageLoaded = false;
+  let revealed = false;
 
   function revealPage() {
     gsap.to(loader, {
@@ -1115,14 +1114,13 @@
   }
 
   function checkReady() {
-    if (greetingsDone && pageLoaded) {
-      revealPage();
-    }
+    if (revealed) return;
+    revealed = true;
+    revealPage();
   }
 
   function showGreeting(index) {
     if (index >= greetings.length) {
-      greetingsDone = true;
       checkReady();
       return;
     }
@@ -1147,10 +1145,19 @@
 
   showGreeting(0);
 
-  window.addEventListener('load', () => {
-    pageLoaded = true;
-    checkReady();
-  });
+  // lazy-load videos when they scroll into view
+  const videos = document.querySelectorAll('video[data-src]');
+  const videoObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const v = entry.target;
+        v.src = v.dataset.src;
+        v.load();
+        videoObserver.unobserve(v);
+      }
+    });
+  }, { rootMargin: '200px' });
+  videos.forEach(v => videoObserver.observe(v));
 
   // ============================================
   // SCROLL ANIMATIONS
