@@ -1072,48 +1072,13 @@
 
   const greetings = ['Hello.', 'Bonjour.', '你好.', 'こんにちは', 'Ciao.', 'Olá.'];
   let gi = 0;
+  let greetingsDone = false;
+  let pageLoaded = false;
 
-  function showGreeting(index) {
-    if (index >= greetings.length) return;
-    loaderCounter.textContent = String(index + 1).padStart(2, '0') + ' / ' + String(greetings.length).padStart(2, '0');
-
-    // set text
-    loaderText.textContent = greetings[index];
-
-    // animate in
-    gsap.fromTo(loaderText,
-      { opacity: 0, scale: 0.8, filter: 'blur(8px)' },
-      { opacity: 1, scale: 1, filter: 'blur(0px)', duration: 0.35, ease: 'power2.out' }
-    );
-
-    // animate out after a beat
-    gsap.to(loaderText, {
-      opacity: 0,
-      scale: 1.1,
-      filter: 'blur(6px)',
-      duration: 0.25,
-      delay: 0.35,
-      ease: 'power2.in',
-      onComplete: () => {
-        gi++;
-        if (gi < greetings.length) {
-          showGreeting(gi);
-        }
-      }
-    });
-  }
-
-  // start the greeting cycle
-  showGreeting(0);
-
-  window.addEventListener('load', () => {
-    // let greetings finish, then reveal
-    const totalGreetTime = greetings.length * 0.6 + 0.2;
-
+  function revealPage() {
     gsap.to(loader, {
       yPercent: -100,
       duration: 0.8,
-      delay: totalGreetTime,
       ease: 'power3.inOut',
       onComplete: () => loader.style.display = 'none'
     });
@@ -1122,7 +1087,7 @@
     // HERO ANIMATION
     // ============================================
 
-    const tl = gsap.timeline({ delay: totalGreetTime + 0.2 });
+    const tl = gsap.timeline({ delay: 0.2 });
 
     tl.from('.hero-greeting', {
       opacity: 0,
@@ -1147,6 +1112,44 @@
       duration: 0.6,
       ease: 'power2.out'
     }, '-=0.2');
+  }
+
+  function checkReady() {
+    if (greetingsDone && pageLoaded) {
+      revealPage();
+    }
+  }
+
+  function showGreeting(index) {
+    if (index >= greetings.length) {
+      greetingsDone = true;
+      checkReady();
+      return;
+    }
+    loaderCounter.textContent = String(index + 1).padStart(2, '0') + ' / ' + String(greetings.length).padStart(2, '0');
+    loaderText.textContent = greetings[index];
+
+    gsap.fromTo(loaderText,
+      { opacity: 0, scale: 0.8, filter: 'blur(8px)' },
+      { opacity: 1, scale: 1, filter: 'blur(0px)', duration: 0.35, ease: 'power2.out' }
+    );
+
+    gsap.to(loaderText, {
+      opacity: 0,
+      scale: 1.1,
+      filter: 'blur(6px)',
+      duration: 0.25,
+      delay: 0.35,
+      ease: 'power2.in',
+      onComplete: () => showGreeting(index + 1)
+    });
+  }
+
+  showGreeting(0);
+
+  window.addEventListener('load', () => {
+    pageLoaded = true;
+    checkReady();
   });
 
   // ============================================
