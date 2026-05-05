@@ -1,0 +1,1248 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>kenaminox — Designer & Developer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<style>
+  /* ============================================
+     DENNIS SNELLENBERG DESIGN SYSTEM
+     via Refero Styles + taste-skill rules
+     ============================================ */
+
+  :root {
+    --midnight-ink: #1c1d20;
+    --frosted-glass: #ffffff;
+    --neutral-stone: #999d9e;
+    --graphite-shadow: #494a4d;
+    --vivid-violet: #455ce9;
+    --vivid-violet-dim: #334bd3;
+    --vivid-violet-glow: rgba(69, 92, 233, 0.15);
+
+    --surface-0: #1c1d20;
+    --surface-1: #232428;
+    --surface-2: #2a2b30;
+
+    --text-primary: #ffffff;
+    --text-secondary: #999d9e;
+    --text-muted: #5a5d5f;
+    --border: #333438;
+
+    --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+
+    --radius-sm: 6px;
+    --radius-md: 12px;
+    --radius-lg: 20px;
+
+    --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+    --duration: 280ms;
+  }
+
+  /* ============================================
+     RESET
+     ============================================ */
+
+  *, *::before, *::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  html {
+    font-size: 16px;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    font-family: var(--font-sans);
+    background: var(--midnight-ink);
+    color: var(--text-primary);
+    line-height: 1.6;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  img {
+    display: block;
+    max-width: 100%;
+  }
+
+  /* ============================================
+     CUSTOM CURSOR
+     ============================================ */
+
+  .cursor {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 16px;
+    height: 16px;
+    border: 2px solid var(--frosted-glass);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    mix-blend-mode: difference;
+    transform: translate(-50%, -50%);
+    transition: width 0.3s var(--ease-out),
+                height 0.3s var(--ease-out),
+                border-color 0.3s var(--ease-out);
+  }
+
+  .cursor.hovering {
+    width: 48px;
+    height: 48px;
+    border-color: var(--vivid-violet);
+  }
+
+  .cursor-dot {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 4px;
+    background: var(--frosted-glass);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 10000;
+    mix-blend-mode: difference;
+    transform: translate(-50%, -50%);
+  }
+
+  @media (max-width: 768px) {
+    .cursor, .cursor-dot { display: none; }
+    body { cursor: auto; }
+  }
+
+  /* ============================================
+     LAYOUT
+     ============================================ */
+
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 clamp(24px, 5vw, 80px);
+  }
+
+  /* ============================================
+     NAV
+     ============================================ */
+
+  nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    padding: 28px 0;
+  }
+
+  .nav-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 clamp(24px, 5vw, 80px);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .nav-logo {
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+
+  .nav-logo span {
+    color: var(--vivid-violet);
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 32px;
+    list-style: none;
+  }
+
+  .nav-links a {
+    font-size: 14px;
+    color: var(--text-secondary);
+    transition: color var(--duration) var(--ease-out);
+    position: relative;
+  }
+
+  .nav-links a::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 0;
+    width: 0;
+    height: 1px;
+    background: var(--vivid-violet);
+    transition: width var(--duration) var(--ease-out);
+  }
+
+  .nav-links a:hover {
+    color: var(--text-primary);
+  }
+
+  .nav-links a:hover::after {
+    width: 100%;
+  }
+
+  .nav-menu-btn {
+    display: none;
+    background: none;
+    border: none;
+    color: var(--text-primary);
+    font-size: 14px;
+    font-family: var(--font-sans);
+    cursor: none;
+  }
+
+  @media (max-width: 768px) {
+    .nav-links { display: none; }
+    .nav-menu-btn { display: block; }
+  }
+
+  /* ============================================
+     HERO
+     ============================================ */
+
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-content {
+    position: relative;
+    z-index: 2;
+  }
+
+  .hero-greeting {
+    font-family: var(--font-mono);
+    font-size: clamp(13px, 1.4vw, 15px);
+    color: var(--vivid-violet);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-bottom: 24px;
+  }
+
+  .hero-title {
+    font-size: clamp(48px, 9vw, 140px);
+    font-weight: 700;
+    line-height: 0.95;
+    letter-spacing: -0.04em;
+    margin-bottom: 32px;
+  }
+
+  .hero-title .line {
+    display: block;
+    overflow: hidden;
+  }
+
+  .hero-title .line span {
+    display: block;
+  }
+
+  .hero-title .accent {
+    color: var(--vivid-violet);
+  }
+
+  .hero-subtitle {
+    font-size: clamp(16px, 2vw, 22px);
+    color: var(--text-secondary);
+    max-width: 480px;
+    line-height: 1.6;
+    font-weight: 300;
+  }
+
+  .hero-scroll {
+    position: absolute;
+    bottom: 48px;
+    left: 0;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--text-muted);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .hero-scroll .line {
+    width: 48px;
+    height: 1px;
+    background: var(--text-muted);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-scroll .line::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: var(--vivid-violet);
+    animation: scrollLine 2s ease-in-out infinite;
+  }
+
+  @keyframes scrollLine {
+    0% { left: -100%; }
+    50% { left: 0; }
+    100% { left: 100%; }
+  }
+
+  /* background glow */
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: 20%;
+    right: -10%;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, var(--vivid-violet-glow) 0%, transparent 70%);
+    pointer-events: none;
+    opacity: 0.5;
+  }
+
+  /* ============================================
+     SECTION HEADER
+     ============================================ */
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    margin-bottom: 64px;
+  }
+
+  .section-number {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--vivid-violet);
+    letter-spacing: 0.06em;
+  }
+
+  .section-line {
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  .section-label {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--text-muted);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  /* ============================================
+     PROJECTS
+     ============================================ */
+
+  .projects {
+    padding: 120px 0;
+  }
+
+  .projects-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+  }
+
+  .project-card {
+    position: relative;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    aspect-ratio: 16 / 10;
+    background: var(--surface-1);
+    cursor: none;
+  }
+
+  .project-card:first-child {
+    grid-column: span 2;
+    aspect-ratio: 21 / 9;
+  }
+
+  .project-img, .project-video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.6s var(--ease-out),
+                filter 0.6s var(--ease-out);
+  }
+
+  .project-card:hover .project-img,
+  .project-card:hover .project-video {
+    transform: scale(1.05);
+    filter: brightness(0.6);
+  }
+
+  .project-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: clamp(24px, 4vw, 48px);
+    opacity: 0;
+    transition: opacity var(--duration) var(--ease-out);
+  }
+
+  .project-card:hover .project-overlay {
+    opacity: 1;
+  }
+
+  .project-tag {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--vivid-violet);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .project-name {
+    font-size: clamp(20px, 3vw, 32px);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    margin-bottom: 8px;
+  }
+
+  .project-desc {
+    font-size: 15px;
+    color: var(--text-secondary);
+    max-width: 400px;
+    line-height: 1.5;
+  }
+
+  .project-arrow {
+    position: absolute;
+    top: 24px;
+    right: 24px;
+    width: 40px;
+    height: 40px;
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transform: translate(-8px, 8px);
+    transition: opacity var(--duration) var(--ease-out),
+                transform var(--duration) var(--ease-out);
+  }
+
+  .project-card:hover .project-arrow {
+    opacity: 1;
+    transform: translate(0, 0);
+  }
+
+  .project-arrow svg {
+    width: 16px;
+    height: 16px;
+    stroke: var(--frosted-glass);
+    stroke-width: 2;
+    fill: none;
+  }
+
+  /* placeholder gradient for project images */
+  .project-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-mono);
+    font-size: 14px;
+    color: var(--text-muted);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .project-placeholder.p1 { background: linear-gradient(135deg, #2a1f3d, #1a1a2e, #16213e); }
+  .project-placeholder.p2 { background: linear-gradient(135deg, #1a1a2e, #0f3460, #16213e); }
+  .project-placeholder.p3 { background: linear-gradient(135deg, #16213e, #1a1a2e, #2a1f3d); }
+  .project-placeholder.p4 { background: linear-gradient(135deg, #0f3460, #1a1a2e, #16213e); }
+
+  @media (max-width: 768px) {
+    .projects-grid {
+      grid-template-columns: 1fr;
+    }
+    .project-card:first-child {
+      grid-column: span 1;
+      aspect-ratio: 16 / 10;
+    }
+  }
+
+  /* ============================================
+     ABOUT
+     ============================================ */
+
+  .about {
+    padding: 120px 0;
+  }
+
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: start;
+  }
+
+  .about-text h3 {
+    font-size: clamp(28px, 4vw, 42px);
+    font-weight: 600;
+    letter-spacing: -0.03em;
+    line-height: 1.2;
+    margin-bottom: 24px;
+  }
+
+  .about-text p {
+    font-size: 16px;
+    color: var(--text-secondary);
+    line-height: 1.8;
+    margin-bottom: 16px;
+  }
+
+  .about-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+  }
+
+  .stat {
+    padding: 24px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    transition: border-color var(--duration) var(--ease-out),
+                background var(--duration) var(--ease-out);
+  }
+
+  .stat:hover {
+    border-color: var(--vivid-violet);
+    background: var(--vivid-violet-glow);
+  }
+
+  .stat-value {
+    font-size: 36px;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    margin-bottom: 4px;
+  }
+
+  .stat-value .accent {
+    color: var(--vivid-violet);
+  }
+
+  .stat-label {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--text-muted);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .about-skills {
+    margin-top: 48px;
+  }
+
+  .about-skills h4 {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--text-muted);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+
+  .skill-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .skill-tag {
+    padding: 6px 14px;
+    background: var(--surface-1);
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    font-size: 13px;
+    color: var(--text-secondary);
+    transition: border-color var(--duration) var(--ease-out),
+                color var(--duration) var(--ease-out);
+  }
+
+  .skill-tag:hover {
+    border-color: var(--vivid-violet);
+    color: var(--text-primary);
+  }
+
+  @media (max-width: 768px) {
+    .about-grid {
+      grid-template-columns: 1fr;
+      gap: 48px;
+    }
+  }
+
+  /* ============================================
+     CONTACT
+     ============================================ */
+
+  .contact {
+    padding: 120px 0 80px;
+    text-align: center;
+  }
+
+  .contact-eyebrow {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--vivid-violet);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+
+  .contact-title {
+    font-size: clamp(36px, 7vw, 80px);
+    font-weight: 700;
+    letter-spacing: -0.04em;
+    line-height: 1.05;
+    margin-bottom: 24px;
+  }
+
+  .contact-title .accent {
+    color: var(--vivid-violet);
+  }
+
+  .contact-desc {
+    font-size: 17px;
+    color: var(--text-secondary);
+    max-width: 440px;
+    margin: 0 auto 40px;
+    line-height: 1.6;
+  }
+
+  .contact-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 36px;
+    background: var(--vivid-violet);
+    border: none;
+    border-radius: 100px;
+    color: var(--frosted-glass);
+    font-family: var(--font-sans);
+    font-size: 15px;
+    font-weight: 500;
+    cursor: none;
+    transition: background var(--duration) var(--ease-out),
+                transform var(--duration) var(--ease-out),
+                box-shadow var(--duration) var(--ease-out);
+  }
+
+  .contact-btn:hover {
+    background: var(--vivid-violet-dim);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 32px rgba(69, 92, 233, 0.3);
+  }
+
+  .contact-btn svg {
+    width: 16px;
+    height: 16px;
+    stroke: currentColor;
+    stroke-width: 2;
+    fill: none;
+  }
+
+  .social-links {
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    margin-top: 48px;
+  }
+
+  .social-links a {
+    font-size: 14px;
+    color: var(--text-muted);
+    transition: color var(--duration) var(--ease-out);
+  }
+
+  .social-links a:hover {
+    color: var(--vivid-violet);
+  }
+
+  /* ============================================
+     FOOTER
+     ============================================ */
+
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 32px 0;
+  }
+
+  .footer-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 clamp(24px, 5vw, 80px);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .footer-left {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--text-muted);
+    letter-spacing: 0.04em;
+  }
+
+  .footer-right {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--text-muted);
+    letter-spacing: 0.04em;
+  }
+
+  /* ============================================
+     PAGE TRANSITION OVERLAY
+     ============================================ */
+
+  .page-loader {
+    position: fixed;
+    inset: 0;
+    background: var(--midnight-ink);
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .page-loader .loader-text {
+    font-size: clamp(48px, 10vw, 120px);
+    font-weight: 700;
+    letter-spacing: -0.04em;
+    color: var(--frosted-glass);
+    position: absolute;
+    will-change: transform, opacity;
+  }
+
+  .page-loader .loader-counter {
+    position: absolute;
+    bottom: 48px;
+    right: clamp(24px, 5vw, 80px);
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--text-muted);
+    letter-spacing: 0.06em;
+  }
+
+  /* ============================================
+     MARQUEE
+     ============================================ */
+
+  .marquee-section {
+    padding: 48px 0;
+    overflow: hidden;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .marquee-track {
+    display: flex;
+    animation: marquee 20s linear infinite;
+  }
+
+  .marquee-content {
+    display: flex;
+    align-items: center;
+    gap: 48px;
+    flex-shrink: 0;
+    padding-right: 48px;
+  }
+
+  .marquee-content span {
+    font-size: clamp(14px, 2vw, 18px);
+    color: var(--text-muted);
+    white-space: nowrap;
+    font-weight: 300;
+  }
+
+  .marquee-content .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--vivid-violet);
+    flex-shrink: 0;
+  }
+
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+</style>
+</head>
+<body>
+
+<!-- PAGE LOADER -->
+<div class="page-loader">
+  <div class="loader-text">Hello.</div>
+  <div class="loader-counter">01 / 06</div>
+</div>
+
+<!-- CUSTOM CURSOR -->
+<div class="cursor"></div>
+<div class="cursor-dot"></div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-inner">
+    <a href="#" class="nav-logo">kena<span>minox</span></a>
+    <ul class="nav-links">
+      <li><a href="#work" data-hover>Work</a></li>
+      <li><a href="#about" data-hover>About</a></li>
+      <li><a href="#contact" data-hover>Contact</a></li>
+    </ul>
+    <button class="nav-menu-btn">Menu</button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="container hero-content">
+    <div class="hero-greeting">Hello / 你好 / こんにちは</div>
+    <h1 class="hero-title">
+      <span class="line"><span>I'm <em class="accent">kena</em></span></span>
+      <span class="line"><span>minox.</span></span>
+    </h1>
+    <p class="hero-subtitle">
+      I craft interfaces, build desktop tools, and explore the space between design and code. Obsessed with dark aesthetics and functional minimalism.
+    </p>
+  </div>
+  <div class="container hero-scroll">
+    <span class="line"></span>
+    Scroll to explore
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee-section">
+  <div class="marquee-track">
+    <div class="marquee-content">
+      <span>Desktop Apps</span><span class="dot"></span>
+      <span>Terminal UI</span><span class="dot"></span>
+      <span>WebGL Shaders</span><span class="dot"></span>
+      <span>Data Visualization</span><span class="dot"></span>
+      <span>System Tools</span><span class="dot"></span>
+      <span>Dark Aesthetics</span><span class="dot"></span>
+    </div>
+    <div class="marquee-content" aria-hidden="true">
+      <span>Desktop Apps</span><span class="dot"></span>
+      <span>Terminal UI</span><span class="dot"></span>
+      <span>WebGL Shaders</span><span class="dot"></span>
+      <span>Data Visualization</span><span class="dot"></span>
+      <span>System Tools</span><span class="dot"></span>
+      <span>Dark Aesthetics</span><span class="dot"></span>
+    </div>
+  </div>
+</div>
+
+<!-- PROJECTS -->
+<section class="projects" id="work">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-number">01</span>
+      <span class="section-line"></span>
+      <span class="section-label">Selected Work</span>
+    </div>
+
+    <div class="projects-grid">
+      <!-- VoidShell — featured -->
+      <div class="project-card" data-hover>
+        <video class="project-video" autoplay muted loop playsinline src="assets/voidshell-demo.mp4"></video>
+        <div class="project-overlay">
+          <span class="project-tag">Electron &middot; React &middot; Three.js</span>
+          <h3 class="project-name">VoidShell</h3>
+          <p class="project-desc">A psychological horror-themed terminal emulator with dynamic WebGL shader backgrounds, glitch effects triggered by errors, and a Java sidecar for real-time system monitoring.</p>
+        </div>
+        <div class="project-arrow">
+          <svg viewBox="0 0 24 24"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg>
+        </div>
+      </div>
+
+      <!-- VoidMetric -->
+      <div class="project-card" data-hover>
+        <video class="project-video" autoplay muted loop playsinline src="assets/voidmetric-demo.mp4"></video>
+        <div class="project-overlay">
+          <span class="project-tag">Python &middot; Rich &middot; psutil</span>
+          <h3 class="project-name">VoidMetric</h3>
+          <p class="project-desc">Post-apocalyptic TUI system monitor. Per-core CPU waveforms, thermal-reactive "madness levels" that increase visual glitch as temperature rises, and industrial ambient sound generation.</p>
+        </div>
+        <div class="project-arrow">
+          <svg viewBox="0 0 24 24"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg>
+        </div>
+      </div>
+
+      <!-- Java Logic Visualizer -->
+      <div class="project-card" data-hover>
+        <img class="project-img" src="assets/java-visualizer.png" alt="Java Logic Visualizer">
+        <div class="project-overlay">
+          <span class="project-tag">Electron &middot; D3.js &middot; Node.js</span>
+          <h3 class="project-name">Java Logic Visualizer</h3>
+          <p class="project-desc">Drag-and-drop Java files to visualize class dependencies as an interactive force-directed graph. Parses inheritance, interfaces, Spring annotations, and field relationships.</p>
+        </div>
+        <div class="project-arrow">
+          <svg viewBox="0 0 24 24"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg>
+        </div>
+      </div>
+
+      <!-- Project Void Assets -->
+      <div class="project-card" data-hover>
+        <img class="project-img" src="assets/project-void.png" alt="Project Void Assets">
+        <div class="project-overlay">
+          <span class="project-tag">Java &middot; JSON &middot; Game Design</span>
+          <h3 class="project-name">Project Void Assets</h3>
+          <p class="project-desc">Indie bio-horror game asset pipeline — level configs, procedural color palettes, and a Java runtime loader system. Inspired by Carrion.</p>
+        </div>
+        <div class="project-arrow">
+          <svg viewBox="0 0 24 24"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section class="about" id="about">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-number">02</span>
+      <span class="section-line"></span>
+      <span class="section-label">About</span>
+    </div>
+
+    <div class="about-grid">
+      <div class="about-text">
+        <h3>I build tools that feel alive.</h3>
+        <p>
+          I'm drawn to the intersection of engineering and aesthetics — where functional code meets intentional design.
+          Most of my work lives in the terminal or on the desktop, where I can control every pixel and every frame.
+        </p>
+        <p>
+          My projects share a common thread: the "void" aesthetic. Dark surfaces, organic textures, systems that breathe and glitch.
+          I believe software should have personality — not just features.
+        </p>
+
+        <div class="about-skills">
+          <h4>Tech Stack</h4>
+          <div class="skill-tags">
+            <span class="skill-tag">Electron</span>
+            <span class="skill-tag">React</span>
+            <span class="skill-tag">TypeScript</span>
+            <span class="skill-tag">Three.js</span>
+            <span class="skill-tag">Python</span>
+            <span class="skill-tag">D3.js</span>
+            <span class="skill-tag">C</span>
+            <span class="skill-tag">Java</span>
+            <span class="skill-tag">Tailwind CSS</span>
+            <span class="skill-tag">GLSL</span>
+            <span class="skill-tag">Node.js</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="about-stats">
+        <div class="stat">
+          <div class="stat-value"><span class="accent">4</span></div>
+          <div class="stat-label">Original Projects</div>
+        </div>
+        <div class="stat">
+          <div class="stat-value"><span class="accent">6</span></div>
+          <div class="stat-label">Languages Used</div>
+        </div>
+        <div class="stat">
+          <div class="stat-value"><span class="accent">3</span></div>
+          <div class="stat-label">Desktop Apps Built</div>
+        </div>
+        <div class="stat">
+          <div class="stat-value"><span class="accent">∞</span></div>
+          <div class="stat-label">Dark Themes Made</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="contact" id="contact">
+  <div class="container">
+    <div class="contact-eyebrow">Get in touch</div>
+    <h2 class="contact-title">Let's build<br>something <span class="accent">great</span>.</h2>
+    <p class="contact-desc">
+      Have a project in mind or just want to chat? I'm always open to new opportunities and conversations.
+    </p>
+    <a href="mailto:kenaminox@gmail.com" class="contact-btn" data-hover>
+      Say Hello
+      <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </a>
+
+    <div class="social-links">
+      <a href="https://github.com/kenamino" target="_blank" data-hover>GitHub</a>
+      <a href="https://twitter.com/kenaminox" target="_blank" data-hover>Twitter</a>
+      <a href="mailto:kenaminox@gmail.com" data-hover>Email</a>
+      <a href="https://qm.qq.com/q/placeholder" data-hover>QQ: 992312554</a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-left">&copy; 2026 kenaminox</div>
+    <div class="footer-right">Designed & Built with intent</div>
+  </div>
+</footer>
+
+<!-- SCRIPTS -->
+<script>
+  // ============================================
+  // CUSTOM CURSOR
+  // ============================================
+
+  const cursor = document.querySelector('.cursor');
+  const cursorDot = document.querySelector('.cursor-dot');
+  let mouseX = 0, mouseY = 0;
+  let cursorX = 0, cursorY = 0;
+  let dotX = 0, dotY = 0;
+
+  document.addEventListener('mousemove', (e) => {
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+  });
+
+  function animateCursor() {
+    // smooth follow for ring
+    cursorX += (mouseX - cursorX) * 0.12;
+    cursorY += (mouseY - cursorY) * 0.12;
+    cursor.style.left = cursorX + 'px';
+    cursor.style.top = cursorY + 'px';
+
+    // fast follow for dot
+    dotX += (mouseX - dotX) * 0.6;
+    dotY += (mouseY - dotY) * 0.6;
+    cursorDot.style.left = dotX + 'px';
+    cursorDot.style.top = dotY + 'px';
+
+    requestAnimationFrame(animateCursor);
+  }
+  animateCursor();
+
+  // hover effect
+  document.querySelectorAll('[data-hover]').forEach(el => {
+    el.addEventListener('mouseenter', () => cursor.classList.add('hovering'));
+    el.addEventListener('mouseleave', () => cursor.classList.remove('hovering'));
+  });
+
+  // ============================================
+  // PAGE LOADER
+  // ============================================
+
+  const loader = document.querySelector('.page-loader');
+  const loaderText = loader.querySelector('.loader-text');
+  const loaderCounter = loader.querySelector('.loader-counter');
+
+  const greetings = ['Hello.', 'Bonjour.', '你好.', 'こんにちは', 'Ciao.', 'Olá.'];
+  let gi = 0;
+
+  function showGreeting(index) {
+    if (index >= greetings.length) return;
+    loaderCounter.textContent = String(index + 1).padStart(2, '0') + ' / ' + String(greetings.length).padStart(2, '0');
+
+    // set text
+    loaderText.textContent = greetings[index];
+
+    // animate in
+    gsap.fromTo(loaderText,
+      { opacity: 0, scale: 0.8, filter: 'blur(8px)' },
+      { opacity: 1, scale: 1, filter: 'blur(0px)', duration: 0.35, ease: 'power2.out' }
+    );
+
+    // animate out after a beat
+    gsap.to(loaderText, {
+      opacity: 0,
+      scale: 1.1,
+      filter: 'blur(6px)',
+      duration: 0.25,
+      delay: 0.35,
+      ease: 'power2.in',
+      onComplete: () => {
+        gi++;
+        if (gi < greetings.length) {
+          showGreeting(gi);
+        }
+      }
+    });
+  }
+
+  // start the greeting cycle
+  showGreeting(0);
+
+  window.addEventListener('load', () => {
+    // let greetings finish, then reveal
+    const totalGreetTime = greetings.length * 0.6 + 0.2;
+
+    gsap.to(loader, {
+      yPercent: -100,
+      duration: 0.8,
+      delay: totalGreetTime,
+      ease: 'power3.inOut',
+      onComplete: () => loader.style.display = 'none'
+    });
+
+    // ============================================
+    // HERO ANIMATION
+    // ============================================
+
+    const tl = gsap.timeline({ delay: totalGreetTime + 0.2 });
+
+    tl.from('.hero-greeting', {
+      opacity: 0,
+      y: 20,
+      duration: 0.6,
+      ease: 'power2.out'
+    })
+    .from('.hero-title .line span', {
+      y: '100%',
+      duration: 0.8,
+      stagger: 0.1,
+      ease: 'power3.out'
+    }, '-=0.3')
+    .from('.hero-subtitle', {
+      opacity: 0,
+      y: 20,
+      duration: 0.6,
+      ease: 'power2.out'
+    }, '-=0.3')
+    .from('.hero-scroll', {
+      opacity: 0,
+      duration: 0.6,
+      ease: 'power2.out'
+    }, '-=0.2');
+  });
+
+  // ============================================
+  // SCROLL ANIMATIONS
+  // ============================================
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  // section headers
+  gsap.utils.toArray('.section-header').forEach(header => {
+    gsap.from(header, {
+      opacity: 0,
+      x: -40,
+      duration: 0.8,
+      ease: 'power2.out',
+      scrollTrigger: {
+        trigger: header,
+        start: 'top 85%',
+        toggleActions: 'play none none none'
+      }
+    });
+  });
+
+  // project cards
+  gsap.utils.toArray('.project-card').forEach((card, i) => {
+    gsap.from(card, {
+      opacity: 0,
+      y: 60,
+      duration: 0.8,
+      delay: i * 0.1,
+      ease: 'power2.out',
+      scrollTrigger: {
+        trigger: card,
+        start: 'top 85%',
+        toggleActions: 'play none none none'
+      }
+    });
+  });
+
+  // about text
+  gsap.from('.about-text', {
+    opacity: 0,
+    y: 40,
+    duration: 0.8,
+    ease: 'power2.out',
+    scrollTrigger: {
+      trigger: '.about-text',
+      start: 'top 80%',
+      toggleActions: 'play none none none'
+    }
+  });
+
+  // stats
+  gsap.utils.toArray('.stat').forEach((stat, i) => {
+    gsap.from(stat, {
+      opacity: 0,
+      y: 30,
+      duration: 0.6,
+      delay: i * 0.1,
+      ease: 'power2.out',
+      scrollTrigger: {
+        trigger: stat,
+        start: 'top 85%',
+        toggleActions: 'play none none none'
+      }
+    });
+  });
+
+  // contact
+  gsap.from('.contact-title', {
+    opacity: 0,
+    y: 40,
+    duration: 0.8,
+    ease: 'power2.out',
+    scrollTrigger: {
+      trigger: '.contact-title',
+      start: 'top 80%',
+      toggleActions: 'play none none none'
+    }
+  });
+
+  // nav hide/show on scroll
+  let lastScroll = 0;
+  const nav = document.querySelector('nav');
+
+  window.addEventListener('scroll', () => {
+    const current = window.scrollY;
+    if (current > lastScroll && current > 100) {
+      nav.style.transform = 'translateY(-100%)';
+      nav.style.transition = 'transform 0.3s ease';
+    } else {
+      nav.style.transform = 'translateY(0)';
+    }
+    lastScroll = current;
+  });
+</script>
+
+</body>
+</html>
