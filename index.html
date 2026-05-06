@@ -4,6 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>kenaminox — Designer & Developer</title>
+<meta name="description" content="kenaminox — Multi-modal creator crafting dark-aesthetic desktop tools, terminal interfaces, and experimental software.">
+<meta property="og:title" content="kenaminox — Designer & Developer">
+<meta property="og:description" content="Multi-modal creator crafting dark-aesthetic desktop tools, terminal interfaces, and experimental software.">
+<meta property="og:type" content="website">
+<meta property="og:image" content="assets/og-preview.png">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🕸️%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -42,6 +48,101 @@
 
     --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
     --duration: 280ms;
+  }
+
+  /* ============================================
+     NOISE OVERLAY
+     ============================================ */
+
+  .noise-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9998;
+    pointer-events: none;
+    opacity: 0.035;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-repeat: repeat;
+    background-size: 256px 256px;
+  }
+
+  /* ============================================
+     THEME TOGGLE
+     ============================================ */
+
+  .theme-toggle {
+    width: 36px;
+    height: 36px;
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    background: transparent;
+    color: var(--text-secondary);
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: none;
+    transition: border-color var(--duration) var(--ease-out),
+                color var(--duration) var(--ease-out),
+                background var(--duration) var(--ease-out);
+  }
+
+  .theme-toggle:hover {
+    border-color: var(--vivid-violet);
+    color: var(--vivid-violet);
+    background: var(--vivid-violet-glow);
+  }
+
+  /* ============================================
+     MOBILE MENU
+     ============================================ */
+
+  .mobile-menu {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(28, 29, 32, 0.97);
+    backdrop-filter: blur(20px);
+    z-index: 99;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 32px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s var(--ease-out);
+  }
+
+  .mobile-menu.active {
+    opacity: 1;
+    pointer-events: all;
+  }
+
+  .mobile-menu a {
+    font-size: 28px;
+    font-weight: 600;
+    color: var(--text-primary);
+    letter-spacing: -0.02em;
+    transition: color var(--duration) var(--ease-out);
+  }
+
+  .mobile-menu a:hover {
+    color: var(--vivid-violet);
+  }
+
+  .mobile-close-btn {
+    position: absolute;
+    top: 28px;
+    right: clamp(24px, 5vw, 80px);
+    background: none;
+    border: none;
+    color: var(--text-primary);
+    font-size: 28px;
+    cursor: none;
+    font-family: var(--font-sans);
+  }
+
+  @media (max-width: 768px) {
+    .mobile-menu { display: flex; }
   }
 
   /* ============================================
@@ -809,6 +910,9 @@
   <div class="loader-counter">01 / 06</div>
 </div>
 
+<!-- NOISE OVERLAY -->
+<div class="noise-overlay"></div>
+
 <!-- CUSTOM CURSOR -->
 <div class="cursor"></div>
 <div class="cursor-dot"></div>
@@ -822,9 +926,20 @@
       <li><a href="#about" data-hover>About</a></li>
       <li><a href="#contact" data-hover>Contact</a></li>
     </ul>
-    <button class="nav-menu-btn">Menu</button>
+    <div style="display:flex;align-items:center;gap:12px;">
+      <button class="theme-toggle" id="themeToggle" data-hover>◐</button>
+      <button class="nav-menu-btn" id="menuOpen">Menu</button>
+    </div>
   </div>
 </nav>
+
+<!-- MOBILE MENU -->
+<div class="mobile-menu" id="mobileMenu">
+  <button class="mobile-close-btn" id="menuClose">✕</button>
+  <a href="#work" data-hover>Work</a>
+  <a href="#about" data-hover>About</a>
+  <a href="#contact" data-hover>Contact</a>
+</div>
 
 <!-- HERO -->
 <section class="hero">
@@ -877,7 +992,7 @@
 
     <div class="projects-grid">
       <!-- VoidShell — featured -->
-      <div class="project-card" data-hover>
+      <div class="project-card" data-hover data-url="https://github.com/kenamino/voidshell">
         <video class="project-video" autoplay muted loop playsinline preload="none" data-src="assets/voidshell-demo.mp4"></video>
         <div class="project-overlay">
           <span class="project-tag">Electron &middot; React &middot; Three.js</span>
@@ -890,7 +1005,7 @@
       </div>
 
       <!-- VoidMetric -->
-      <div class="project-card" data-hover>
+      <div class="project-card" data-hover data-url="https://github.com/kenamino/voidmetric">
         <video class="project-video" autoplay muted loop playsinline preload="none" data-src="assets/voidmetric-demo.mp4"></video>
         <div class="project-overlay">
           <span class="project-tag">Python &middot; Rich &middot; psutil</span>
@@ -903,7 +1018,7 @@
       </div>
 
       <!-- Java Logic Visualizer -->
-      <div class="project-card" data-hover>
+      <div class="project-card" data-hover data-url="https://github.com/kenamino/java-logic-visualize">
         <img class="project-img" src="assets/java-visualizer.png" alt="Java Logic Visualizer">
         <div class="project-overlay">
           <span class="project-tag">Electron &middot; D3.js &middot; Node.js</span>
@@ -916,7 +1031,7 @@
       </div>
 
       <!-- Project Void Assets -->
-      <div class="project-card" data-hover>
+      <div class="project-card" data-hover data-url="https://github.com/kenamino/project-void">
         <img class="project-img" src="assets/project-void.png" alt="Project Void Assets">
         <div class="project-overlay">
           <span class="project-tag">Java &middot; JSON &middot; Game Design</span>
@@ -1251,6 +1366,72 @@
       nav.style.transform = 'translateY(0)';
     }
     lastScroll = current;
+  });
+
+  // ============================================
+  // MOBILE MENU
+  // ============================================
+
+  const menuOpen = document.getElementById('menuOpen');
+  const menuClose = document.getElementById('menuClose');
+  const mobileMenu = document.getElementById('mobileMenu');
+
+  menuOpen?.addEventListener('click', () => mobileMenu.classList.add('active'));
+  menuClose?.addEventListener('click', () => mobileMenu.classList.remove('active'));
+  mobileMenu?.querySelectorAll('a').forEach(a => {
+    a.addEventListener('click', () => mobileMenu.classList.remove('active'));
+  });
+
+  // ============================================
+  // THEME TOGGLE
+  // ============================================
+
+  const themeToggle = document.getElementById('themeToggle');
+  const root = document.documentElement;
+
+  // green theme vars
+  const themes = {
+    violet: { accent: '#455ce9', dim: '#334bd3', glow: 'rgba(69, 92, 233, 0.15)' },
+    green:  { accent: '#3ddc84', dim: '#2bbd6e', glow: 'rgba(61, 220, 132, 0.15)' }
+  };
+  let currentTheme = localStorage.getItem('theme') || 'violet';
+
+  function applyTheme(name) {
+    const t = themes[name];
+    root.style.setProperty('--vivid-violet', t.accent);
+    root.style.setProperty('--vivid-violet-dim', t.dim);
+    root.style.setProperty('--vivid-violet-glow', t.glow);
+    currentTheme = name;
+    localStorage.setItem('theme', name);
+  }
+
+  applyTheme(currentTheme);
+
+  themeToggle?.addEventListener('click', () => {
+    applyTheme(currentTheme === 'violet' ? 'green' : 'violet');
+  });
+
+  // ============================================
+  // PROJECT CARD CLICKS
+  // ============================================
+
+  document.querySelectorAll('.project-card[data-url]').forEach(card => {
+    card.style.cursor = 'none';
+    card.addEventListener('click', () => {
+      window.open(card.dataset.url, '_blank', 'noopener');
+    });
+  });
+
+  // ============================================
+  // MARQUEE HOVER PAUSE
+  // ============================================
+
+  const marqueeTrack = document.querySelector('.marquee-track');
+  marqueeTrack?.addEventListener('mouseenter', () => {
+    marqueeTrack.style.animationPlayState = 'paused';
+  });
+  marqueeTrack?.addEventListener('mouseleave', () => {
+    marqueeTrack.style.animationPlayState = 'running';
   });
 </script>
 
