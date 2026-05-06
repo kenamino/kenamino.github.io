@@ -102,7 +102,7 @@
     inset: 0;
     background: rgba(28, 29, 32, 0.97);
     backdrop-filter: blur(20px);
-    z-index: 99;
+    z-index: 200;
     flex-direction: column;
     align-items: center;
     justify-content: center;
@@ -139,6 +139,7 @@
     font-size: 28px;
     cursor: none;
     font-family: var(--font-sans);
+    z-index: 101;
   }
 
   @media (max-width: 768px) {
@@ -1005,7 +1006,7 @@
       </div>
 
       <!-- VoidMetric -->
-      <div class="project-card" data-hover data-url="https://github.com/kenamino/voidmetric">
+      <div class="project-card" data-hover>
         <video class="project-video" autoplay muted loop playsinline preload="none" data-src="assets/voidmetric-demo.mp4"></video>
         <div class="project-overlay">
           <span class="project-tag">Python &middot; Rich &middot; psutil</span>
@@ -1018,7 +1019,7 @@
       </div>
 
       <!-- Java Logic Visualizer -->
-      <div class="project-card" data-hover data-url="https://github.com/kenamino/java-logic-visualize">
+      <div class="project-card" data-hover>
         <img class="project-img" src="assets/java-visualizer.png" alt="Java Logic Visualizer">
         <div class="project-overlay">
           <span class="project-tag">Electron &middot; D3.js &middot; Node.js</span>
@@ -1031,7 +1032,7 @@
       </div>
 
       <!-- Project Void Assets -->
-      <div class="project-card" data-hover data-url="https://github.com/kenamino/project-void">
+      <div class="project-card" data-hover>
         <img class="project-img" src="assets/project-void.png" alt="Project Void Assets">
         <div class="project-overlay">
           <span class="project-tag">Java &middot; JSON &middot; Game Design</span>
